@@ -1,0 +1,89 @@
+let
+
+ Source = Folder.Files("E:\Manish\tma data"),
+ cleandata = let
+data = Source,
+BinaryConvert = 
+Table.TransformColumns(data, {"Content", 
+each 
+Table.SelectRows(
+Excel.Workbook(_), each 
+    Text.Contains([Item],"sheet2",Comparer.OrdinalIgnoreCase))
+})[[Content]],
+
+expand_table =
+Table.SelectRows(
+Table.SelectRows(
+Table.ExpandTableColumn(
+    BinaryConvert,"Content",{"Data","Kind","Item"}),
+    each [Kind] = "Sheet")[Data]{0}, each [Column1] <> null and [Column1] <> "" ),
+
+cleanup = 
+Table.SelectRows(
+Table.Transpose(
+expand_table
+), each [Column1] <> null),
+
+allcoll =
+List.Distinct(
+    cleanup[Column1]),
+
+firstcoll =
+List.Select(
+    allcoll, each
+List.AnyTrue(
+    List.Transform({"year","month","mfr","cat"},(k)=> Text.Contains(_,k,Comparer.OrdinalIgnoreCase)))),
+rawdata = 
+Table.FillDown(
+Table.AddColumn(
+Table.AddIndexColumn(
+    cleanup,"Index",0,1),
+    "Helper", each if Text.Contains([Column1],"year",Comparer.OrdinalIgnoreCase) then [Index] else null ),
+    {"Helper"}),
+
+group_table =
+Table.Combine(
+    Table.Group(
+    rawdata,{"Helper"},
+    {"New", each Table.PromoteHeaders(Table.Transpose(Table.RemoveColumns(_,{"Index","Helper"})))})[New]),
+
+unpivot_data =
+Table.SelectRows(
+    Table.UnpivotOtherColumns(
+    group_table,firstcoll,"State","Ind_Vol"),
+    each not Text.Contains([MFR],"total",Comparer.OrdinalIgnoreCase) and not Text.Contains([#"CAT-HP"],"total",Comparer.OrdinalIgnoreCase))
+     
+in
+unpivot_data,
+    Custom1 = cleandata,
+    rawdata = Table.AddColumn(Custom1, "Brand", each let 
+model1 = {"mm","ptl"},
+model2 = {"eic","tafe"},
+model3 = {"esc","kubota"}
+in 
+if 
+List.AnyTrue(
+    List.Transform(
+    model1,(k)=> Text.Contains([MFR],k,Comparer.OrdinalIgnoreCase))) then "MM(G)" else 
+if 
+List.AnyTrue(
+    List.Transform(
+    model2,(k)=> Text.Contains([MFR],k,Comparer.OrdinalIgnoreCase))) then "Eic(G)" else 
+    if 
+List.AnyTrue(
+    List.Transform(
+    model3,(k)=> Text.Contains([MFR],k,Comparer.OrdinalIgnoreCase))) then "Esc(G)" else [MFR]),
+    Custom2 = let
+data = rawdata,
+coll = 
+List.Select(
+    Table.ColumnNames(data),each not List.AnyTrue(
+List.Transform({"mfr","vol"},(k)=> Text.Contains(_,k,Comparer.OrdinalIgnoreCase)))),
+table_group =
+Table.Group(
+    data,coll,{"Vol", each List.Sum(_[Ind_Vol])})
+
+in
+table_group
+in
+    Custom2
