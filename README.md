@@ -1,88 +1,38 @@
-# TMA-Sales-Data-Cleaning-F25-F26
-Cleaned and transformed cross-tabular TMA dataset (F25–F26) into analysis-ready format by combining manufacturer groups (MM, EIC, ESC). Suitable for Power BI, SQL, and business analytics projects.
-# 📊 TMA Sales Data Analysis (F25–F26)
+## ⚙️ Data Transformation Using Power Query (M Language)
 
-## 📁 Project Overview
+The dataset was processed using Power Query M language to handle multiple raw Excel files and transform them into a structured format.
 
-This project focuses on transforming and analyzing a cross-tabular TMA dataset for the financial years F25 and F26. The original dataset contained complex manufacturer segmentation and wide-format structure, which was cleaned and converted into a structured, analysis-ready format.
+### 🔄 Key Steps Performed:
 
----
+1. **Folder-Based Data Ingestion**
 
-## 🔄 Data Transformation Process
+   * Loaded multiple Excel files from a folder
+   * Extracted only relevant sheets dynamically
 
-### 1. Handling Cross-Tabular Format
+2. **Data Cleaning & Structuring**
 
-* Original dataset was in wide (cross-tabular) format
-* Converted into **long/tabular format** using unpivoting
-* Improved usability for tools like Power BI and SQL
+   * Removed null and empty rows
+   * Transposed data to fix layout issues
+   * Promoted headers dynamically
 
----
+3. **Dynamic Column Identification**
 
-### 2. Manufacturer Grouping
+   * Automatically detected key columns such as Year, Month, MFR, and Category
 
-Multiple manufacturers were merged into logical groups:
+4. **Unpivot Transformation**
 
-| Original Manufacturers | New Group |
-| ---------------------- | --------- |
-| MM + PTL               | MM(G)     |
-| EIC + TAFE             | EIC(G)    |
-| ESC + Kubota           | ESC(G)    |
+   * Converted cross-tabular format into normalized tabular format
 
-👉 This helped in simplifying analysis and improving comparability.
+5. **Manufacturer Grouping**
 
----
+   * MM + PTL → MM(G)
+   * EIC + TAFE → EIC(G)
+   * ESC + Kubota → ESC(G)
 
-### 3. Data Cleaning
+6. **Data Aggregation**
 
-* Removed duplicate and unnecessary columns
-* Standardized column names
-* Ensured consistency across F25 and F26 datasets
-* Combined both datasets into a single unified dataset
+   * Grouped and summed volume data for analysis
 
----
+### 📌 Outcome:
 
-## 📊 Final Dataset Features
-
-* Month-wise data (F25 & F26)
-* State-wise performance
-* Manufacturer group segmentation
-* Category (HP range) classification
-* Structured tabular format
-
----
-
-## 📂 Files Included
-
-* `TMA Clean Data.xlsx` → Final cleaned dataset
-
----
-
-## 🛠️ Tools & Technologies
-
-* Microsoft Excel (Power Query(M) (Data Cleaning & Transformation)
-* Power BI (Visualization – optional)
-* SQL (Data Analysis – optional)
-
----
-
-## 📈 Use Cases
-
-* Sales trend analysis
-* Regional performance comparison
-* Manufacturer group analysis
-* Business decision-making insights
-
----
-
-## 🎯 Key Learning Outcomes
-
-* Data cleaning and preprocessing
-* Cross-tabular to tabular transformation
-* Data modeling for analytics
-* Business data interpretation
-
----
-
-## 📍 Author
-
-Manish Kr Mandal
+A clean, structured, and analysis-ready dataset suitable for Power BI, SQL, and business analytics.
